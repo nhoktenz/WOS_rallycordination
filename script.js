@@ -122,8 +122,8 @@ function displayResults() {
         <h3>📋 Summary</h3>
         <p><strong>Number of Rally Leaders:</strong> ${numLeaders}</p>
         <p><strong>Open Rally Time (waiting period):</strong> ${formatTime(openRallyTime)}</p>
-        <p><strong>Longest Marching Time:</strong> ${formatTime(longestMarchingTime)} (${leaders[0].name})</p>
-        <p><strong>Longest Total Time:</strong> ${formatTime(longestTotalTime)} (${leaders[0].name})</p>
+        <p><strong>Longest Marching Time:</strong> ${formatTime(longestMarchingTime)} <span class="leader-highlight">${leaders[0].name}</span></p>
+        <p><strong>Longest Total Time:</strong> ${formatTime(longestTotalTime)} <span class="leader-highlight">${leaders[0].name}</span></p>
         <p><strong>All rallies will hit the target at the same time!</strong></p>
     `;
     resultsDiv.appendChild(summary);
@@ -159,9 +159,9 @@ function displayResults() {
     leaders.forEach((leader, index) => {
         const timelineItem = document.createElement('p');
         if (index === 0) {
-            timelineItem.innerHTML = `<strong>T+0s:</strong> ${leader.name} opens rally (waits ${formatTime(openRallyTime)}, then marches ${formatTime(leader.marchingTime)})`;
+            timelineItem.innerHTML = `<strong>T+0s:</strong> <span class="leader-highlight timeline-leader first-leader">${leader.name}</span> opens rally (waits ${formatTime(openRallyTime)}, then marches ${formatTime(leader.marchingTime)})`;
         } else {
-            timelineItem.innerHTML = `<strong>T+${formatTime(leader.delay)}:</strong> ${leader.name} opens rally (waits ${formatTime(openRallyTime)}, then marches ${formatTime(leader.marchingTime)})`;
+            timelineItem.innerHTML = `<strong>T+${formatTime(leader.delay)}:</strong> <span class="leader-highlight timeline-leader">${leader.name}</span> opens rally (waits ${formatTime(openRallyTime)}, then marches ${formatTime(leader.marchingTime)})`;
         }
         timeline.appendChild(timelineItem);
     });
