@@ -204,6 +204,124 @@ select:focus {
     box-shadow: 0 0 0 2px rgba(255, 143, 0, 0.25);
 }
 
+/* Countdown Timer Panel */
+.countdown-panel {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #e0e0e0;
+    border-left: 4px solid #764ba2;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.countdown-panel h3 {
+    color: #c084fc;
+    margin-bottom: 8px;
+    font-size: 1.3em;
+}
+
+.countdown-hint {
+    font-size: 1em;
+    margin-bottom: 15px;
+    color: #b0b0c0;
+}
+
+.btn-start {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    font-size: 1.1em;
+    padding: 14px 36px;
+}
+
+.btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
+}
+
+.btn-start:disabled {
+    background: #4b5563;
+    transform: none;
+    box-shadow: none;
+    cursor: default;
+}
+
+.leader-alert {
+    margin: 14px 0 6px;
+    padding: 12px 20px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 2px solid #ef4444;
+    border-radius: 8px;
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #fca5a5;
+    transition: opacity 1s ease;
+}
+
+.leader-alert.hidden {
+    display: none;
+}
+
+.leader-alert.alert-visible {
+    display: block;
+    opacity: 1;
+}
+
+.leader-alert.fade-out {
+    opacity: 0;
+}
+
+.countdown-next {
+    font-size: 1.05em;
+    color: #94a3b8;
+    margin: 14px 0 4px;
+}
+
+.countdown-timer {
+    font-size: 3.5em;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 4px;
+    margin: 4px 0 14px;
+    font-variant-numeric: tabular-nums;
+    font-family: 'Courier New', monospace;
+}
+
+.countdown-timer.target-hit {
+    font-size: 1.6em;
+    color: #4ade80;
+    letter-spacing: 1px;
+    font-family: inherit;
+}
+
+.leader-status-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 6px;
+}
+
+.leader-status-item {
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 0.95em;
+    font-weight: 600;
+    border: 2px solid transparent;
+}
+
+.leader-status-item.waiting {
+    background: rgba(255, 255, 255, 0.06);
+    color: #94a3b8;
+    border-color: #374151;
+}
+
+.leader-status-item.started {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border-color: #22c55e;
+}
+
 .footer {
     margin-top: 40px;
     padding-top: 20px;
