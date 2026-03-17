@@ -227,6 +227,13 @@ select:focus {
     color: #b0b0c0;
 }
 
+.timer-controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
 .btn-start {
     background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
     color: white;
@@ -240,6 +247,25 @@ select:focus {
 }
 
 .btn-start:disabled {
+    background: #4b5563;
+    transform: none;
+    box-shadow: none;
+    cursor: default;
+}
+
+.btn-cancel {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    color: #fff;
+    font-size: 1em;
+    padding: 14px 22px;
+}
+
+.btn-cancel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.35);
+}
+
+.btn-cancel:disabled {
     background: #4b5563;
     transform: none;
     box-shadow: none;

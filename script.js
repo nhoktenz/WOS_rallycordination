@@ -160,7 +160,10 @@ function displayResults() {
     countdownPanel.innerHTML = `
         <h3>⚔️ Rally Coordination Timer</h3>
         <p class="countdown-hint">Press <strong>Start</strong> when <span class="leader-highlight">${leaders[0].name}</span> opens their rally.</p>
-        <button onclick="startCountdown()" id="startBtn" class="btn btn-start">▶ Start Rally</button>
+        <div class="timer-controls">
+            <button onclick="startCountdown()" id="startBtn" class="btn btn-start">▶ Start Rally</button>
+            <button onclick="cancelCountdown()" id="cancelBtn" class="btn btn-cancel" disabled>✖ Cancel Timer</button>
+        </div>
         <div id="leaderAlert" class="leader-alert hidden"></div>
         <div id="countdownDisplay" class="hidden">
             <div id="countdownNext" class="countdown-next"></div>
@@ -203,15 +206,17 @@ function formatCountdown(seconds) {
 }
 
 function startCountdown() {
-    const btn = document.getElementById('startBtn');
+    const startBtn = document.getElementById('startBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
 
     if (rallyTimer) {
         clearInterval(rallyTimer);
         rallyTimer = null;
     }
 
-    btn.disabled = true;
-    btn.textContent = '⏱️ Running...';
+    startBtn.disabled = true;
+    startBtn.textContent = '⏱️ Running...';
+    cancelBtn.disabled = false;
 
     rallyElapsed = 0;
     startedLeaders = new Set([0]);
@@ -232,6 +237,37 @@ function startCountdown() {
         });
         updateCountdownDisplay();
     }, 1000);
+}
+
+function cancelCountdown() {
+    if (rallyTimer) {
+        clearInterval(rallyTimer);
+        rallyTimer = null;
+    }
+
+    rallyElapsed = 0;
+    startedLeaders = new Set();
+
+    const startBtn = document.getElementById('startBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const alertDiv = document.getElementById('leaderAlert');
+    const display = document.getElementById('countdownDisplay');
+    const nextEl = document.getElementById('countdownNext');
+    const timerEl = document.getElementById('countdownTimer');
+    const statusEl = document.getElementById('leaderStatus');
+
+    startBtn.disabled = false;
+    startBtn.textContent = '▶ Start Rally';
+    cancelBtn.disabled = true;
+
+    alertDiv.className = 'leader-alert hidden';
+    alertDiv.innerHTML = '';
+
+    display.classList.add('hidden');
+    nextEl.innerHTML = '';
+    timerEl.textContent = '--';
+    timerEl.className = 'countdown-timer';
+    statusEl.innerHTML = '';
 }
 
 function showLeaderAlert(index) {
@@ -255,9 +291,11 @@ function updateCountdownDisplay() {
             timerEl.innerHTML = '🎯 All rallies hit the target!';
             timerEl.className = 'countdown-timer target-hit';
 
-            const btn = document.getElementById('startBtn');
-            btn.disabled = false;
-            btn.textContent = '🔁 Start Again';
+            const startBtn = document.getElementById('startBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            startBtn.disabled = false;
+            startBtn.textContent = '🔁 Start Again';
+            cancelBtn.disabled = true;
         } else {
             const allMarching = rallyElapsed >= openRallyTime;
             nextEl.innerHTML = allMarching
