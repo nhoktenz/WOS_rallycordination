@@ -226,6 +226,11 @@ function displayResults() {
         
         resultsDiv.appendChild(resultCard);
     });
+
+    const resultsActions = document.createElement('div');
+    resultsActions.className = 'results-actions mb-3';
+    resultsActions.innerHTML = '<button onclick="addRallyLeaderFromResults()" class="btn btn-add">+ Add Rally Leader</button>';
+    resultsDiv.appendChild(resultsActions);
     
     // Add countdown panel
     const countdownPanel = document.createElement('div');
