@@ -36,7 +36,10 @@
         <div id="results-section" class="section hidden">
             <h2>🎯 Team Assignments</h2>
             <div id="teamsOutput" class="teams-container"></div>
-            <button onclick="resetPlayers()" class="btn btn-secondary">Start Over</button>
+            <div class="section-actions">
+                <button onclick="downloadResults()" class="btn btn-download">⬇ Download Results</button>
+                <button onclick="resetPlayers()" class="btn btn-secondary">Start Over</button>
+            </div>
         </div>
 
         <footer id="sharedFooter" class="footer"></footer>
