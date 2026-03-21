@@ -1,5 +1,12 @@
 let players = [];
 
+function getOverallStats() {
+    return {
+        totalMembers: players.length,
+        totalPower: players.reduce((sum, player) => sum + player.power, 0)
+    };
+}
+
 function addPlayer() {
     const nameInput = document.getElementById('playerName');
     const powerInput = document.getElementById('playerPower');
@@ -35,13 +42,20 @@ function removePlayer(index) {
 
 function renderPlayersList() {
     const listDiv = document.getElementById('playersList');
+    const stats = getOverallStats();
+    const statsHtml = `
+        <div class="overall-stats">
+            <span class="stat-chip">Total Members: <strong>${stats.totalMembers}</strong></span>
+            <span class="stat-chip">Total Power: <strong>${stats.totalPower}</strong></span>
+        </div>
+    `;
     
     if (players.length === 0) {
-        listDiv.innerHTML = '<p class="empty-message">No players added yet.</p>';
+        listDiv.innerHTML = `${statsHtml}<p class="empty-message">No players added yet.</p>`;
         return;
     }
     
-    listDiv.innerHTML = '<h3>Players Added:</h3>' + players.map((player, index) =>
+    listDiv.innerHTML = `${statsHtml}<h3>Players Added:</h3>` + players.map((player, index) =>
         `<div class="player-item">
             <span class="player-info"><strong>${player.name}</strong> - Power: <span class="power-badge">${player.power}</span></span>
             <button onclick="removePlayer(${index})" class="btn btn-remove">✕</button>
@@ -89,8 +103,14 @@ function displayTeams(teams) {
     
     const output = document.getElementById('teamsOutput');
     const teamColors = ['#4facfe', '#f093fb', '#43e97b'];
+    const stats = getOverallStats();
     
-    output.innerHTML = teams.map((team, index) =>
+    output.innerHTML = `
+        <div class="overall-stats overall-stats-results">
+            <span class="stat-chip">Total Members: <strong>${stats.totalMembers}</strong></span>
+            <span class="stat-chip">Total Power: <strong>${stats.totalPower}</strong></span>
+        </div>
+    ` + teams.map((team, index) =>
         `<div class="team-card" style="border-left: 4px solid ${teamColors[index]}">
             <h3>${team.name}</h3>
             <p><strong>Members:</strong> ${team.players.length}</p>

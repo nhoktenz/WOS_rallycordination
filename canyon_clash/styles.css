@@ -157,6 +157,32 @@ input[type="number"]:focus {
     margin-bottom: 15px;
 }
 
+.overall-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.overall-stats-results {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+}
+
+.stat-chip {
+    display: inline-block;
+    background: #e9ecff;
+    color: #334155;
+    border: 1px solid #c7d2fe;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 0.95em;
+}
+
+.stat-chip strong {
+    color: #1e293b;
+}
+
 .empty-message {
     color: #999;
     text-align: center;
