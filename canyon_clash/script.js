@@ -1,5 +1,43 @@
 let players = [];
 
+function downloadPlayerList() {
+    if (players.length === 0) {
+        alert('No players to save!');
+        return;
+    }
+    const blob = new Blob([JSON.stringify(players, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'canyon_clash_players.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function uploadPlayerList(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (!Array.isArray(data) || data.some(p => !p.name || typeof p.power !== 'number')) {
+                alert('Invalid player list file.');
+                return;
+            }
+            players = data.map(p => ({ name: String(p.name).trim(), power: Math.max(1, parseInt(p.power, 10)) }));
+            renderPlayersList();
+            updateDivideButton();
+        } catch {
+            alert('Could not read file. Make sure it is a valid player list JSON.');
+        } finally {
+            event.target.value = '';
+        }
+    };
+    reader.readAsText(file);
+}
+
 function getOverallStats() {
     return {
         totalMembers: players.length,

@@ -32,6 +32,11 @@
 
             <div class="section-actions">
                 <button onclick="divideTeams()" class="btn btn-primary" id="divideBtn" disabled>Divide into Teams</button>
+                <button onclick="downloadPlayerList()" class="btn btn-download">⬇ Save Player List</button>
+                <label class="btn btn-upload-label">
+                    📂 Load Player List
+                    <input type="file" id="uploadPlayerList" accept=".json" onchange="uploadPlayerList(event)" style="display:none">
+                </label>
                 <button onclick="resetPlayers()" class="btn btn-secondary">Clear All</button>
             </div>
         </div>
