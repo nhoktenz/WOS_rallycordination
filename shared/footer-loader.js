@@ -5,11 +5,22 @@ async function loadSharedFooter() {
     }
 
     try {
-        const response = await fetch('../shared/footer.html', { cache: 'no-store' });
-        if (!response.ok) {
+        const footerPaths = ['../shared/footer.html', 'shared/footer.html', '/shared/footer.html'];
+        let loadedHtml = null;
+
+        for (const footerPath of footerPaths) {
+            const response = await fetch(footerPath, { cache: 'no-store' });
+            if (response.ok) {
+                loadedHtml = await response.text();
+                break;
+            }
+        }
+
+        if (!loadedHtml) {
             throw new Error('Failed to load footer');
         }
-        footer.innerHTML = await response.text();
+
+        footer.innerHTML = loadedHtml;
     } catch (error) {
         footer.innerHTML = '<p>Created by <strong>[ADT]『ᴺʰᵒˣᴛᴇɴᴢᴬᴰᵀ༒天ヅ』- 2608</strong></p><p>Made for the Whiteout Survival community ❄️⚔️</p>';
     }
