@@ -6,6 +6,7 @@ This project contains web tools for Whiteout Survival game.
 
 - Rally Coordinator: [https://wos.nhoktenz.com/rally/](https://wos.nhoktenz.com/rally/)
 - Canyon Clash Team Divider: [https://wos.nhoktenz.com/canyon_clash](https://wos.nhoktenz.com/canyon_clash)
+- Art Clip Art: [https://wos.nhoktenz.com/art/](https://wos.nhoktenz.com/art/)
 
 ## Apps
 
@@ -32,6 +33,16 @@ What it includes:
 
 App docs:
 - [canyon_clash/README.md](canyon_clash/README.md)
+
+### Art Clip Art
+
+What it includes:
+- Store clip art in a shareable URL
+- Auto-load clip art from URL query parameter
+- Copy URL and clear/reset actions
+
+App path:
+- [art/index.html](art/index.html)
 
 ## Support
 
