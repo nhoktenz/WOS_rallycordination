@@ -71,40 +71,14 @@
             <div class="section">
                 <h2>🏰 Enemy Estimation Time</h2>
                 <div class="summary enemy-summary">
-                    <p><strong>Use this tab to estimate when an enemy rally will hit your building.</strong></p>
+                    <p><strong>Use this tab to estimate when enemy rallies will hit your building.</strong></p>
+                    <p class="mb-0">Each enemy rally can have its own rally duration, march time, and UTC open time.</p>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="enemyOpenRallyTime" class="form-label">Enemy Rally Duration (before march):</label>
-                    <select id="enemyOpenRallyTime" class="form-select">
-                        <option value="60">1 minute</option>
-                        <option value="180">3 minutes</option>
-                        <option value="300">5 minutes</option>
-                        <option value="600">10 minutes</option>
-                    </select>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label class="form-label">Enemy Marching Time to Building:</label>
-                    <div class="time-inputs">
-                        <div>
-                            <label for="enemyMarchMinutes" class="form-label" style="font-size: 0.9em;">Minutes:</label>
-                            <input type="number" id="enemyMarchMinutes" class="form-control" min="0" max="60" value="0" placeholder="Minutes">
-                        </div>
-                        <div>
-                            <label for="enemyMarchSeconds" class="form-label" style="font-size: 0.9em;">Seconds:</label>
-                            <input type="number" id="enemyMarchSeconds" class="form-control" min="0" max="59" value="0" placeholder="Seconds">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label for="enemyStartUtc" class="form-label">Enemy Rally Opened At (UTC, optional):</label>
-                    <input type="text" id="enemyStartUtc" class="form-control" value="" placeholder="HH:MM or HH:MM:SS (24-hour)" inputmode="numeric" autocomplete="off">
-                    <small class="utc-help">If provided, the exact UTC hit clock time will be calculated.</small>
-                </div>
+                <div id="enemyRallyInputs"></div>
 
                 <div class="d-flex flex-wrap gap-2">
+                    <button onclick="addEnemyRallyInput()" class="btn btn-add">+ Add Enemy Rally</button>
                     <button onclick="estimateEnemyHitTime()" class="btn btn-primary">Estimate Hit Time</button>
                     <button onclick="clearEnemyEstimate()" class="btn btn-secondary">Clear</button>
                 </div>

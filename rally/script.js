@@ -6,6 +6,7 @@ let rallyElapsed = 0;
 let startedLeaders = new Set();
 let useUtcTimeline = false;
 let utcStartTimeSeconds = null;
+let enemyRallyCount = 0;
 
 function switchTab(tabName) {
     const coordinatorTab = document.getElementById('coordinator-tab');
@@ -216,78 +217,238 @@ function formatTime(seconds) {
     }
 }
 
-function estimateEnemyHitTime() {
-    const openRallyInput = document.getElementById('enemyOpenRallyTime');
-    const marchMinutesInput = document.getElementById('enemyMarchMinutes');
-    const marchSecondsInput = document.getElementById('enemyMarchSeconds');
-    const startUtcInput = document.getElementById('enemyStartUtc');
-    const resultsDiv = document.getElementById('enemyResults');
+function buildEnemyRallyCard(index) {
+    const enemyCard = document.createElement('div');
+    enemyCard.className = 'leader-card enemy-rally-card';
+    enemyCard.id = `enemy-rally-card-${index}`;
 
-    if (!openRallyInput || !marchMinutesInput || !marchSecondsInput || !startUtcInput || !resultsDiv) {
+    const removeButton = index === 1
+        ? ''
+        : `<button type="button" onclick="removeEnemyRallyInput(${index})" class="btn btn-sm btn-outline-danger enemy-remove-btn">Remove</button>`;
+
+    enemyCard.innerHTML = `
+        <div class="enemy-rally-card-header">
+            <h3>Enemy Rally ${index}</h3>
+            ${removeButton}
+        </div>
+        <div class="form-group mb-3">
+            <label for="enemy${index}Name" class="form-label">Enemy Label (optional):</label>
+            <input type="text" id="enemy${index}Name" class="form-control" placeholder="Enemy Rally ${index}">
+        </div>
+        <div class="form-group mb-3">
+            <label for="enemy${index}OpenRallyTime" class="form-label">Enemy Rally Duration (before march):</label>
+            <select id="enemy${index}OpenRallyTime" class="form-select">
+                <option value="60">1 minute</option>
+                <option value="180">3 minutes</option>
+                <option value="300">5 minutes</option>
+                <option value="600">10 minutes</option>
+            </select>
+        </div>
+        <div class="form-group mb-3">
+            <label class="form-label">Enemy Marching Time to Building:</label>
+            <div class="time-inputs">
+                <div>
+                    <label for="enemy${index}MarchMinutes" class="form-label enemy-time-label">Minutes:</label>
+                    <input type="number" id="enemy${index}MarchMinutes" class="form-control" min="0" max="60" value="0" placeholder="Minutes">
+                </div>
+                <div>
+                    <label for="enemy${index}MarchSeconds" class="form-label enemy-time-label">Seconds:</label>
+                    <input type="number" id="enemy${index}MarchSeconds" class="form-control" min="0" max="59" value="0" placeholder="Seconds">
+                </div>
+            </div>
+        </div>
+        <div class="form-group mb-0">
+            <label for="enemy${index}StartUtc" class="form-label">Enemy Rally Opened At (UTC, optional):</label>
+            <input type="text" id="enemy${index}StartUtc" class="form-control" value="" placeholder="HH:MM or HH:MM:SS (24-hour)" inputmode="numeric" autocomplete="off">
+            <small class="utc-help">If provided, the exact UTC hit clock time will be calculated for this enemy rally.</small>
+        </div>
+    `;
+
+    return enemyCard;
+}
+
+function renderEnemyRallyInputs() {
+    const inputsContainer = document.getElementById('enemyRallyInputs');
+    if (!inputsContainer) {
         return;
     }
 
-    const openRallySeconds = parseInt(openRallyInput.value, 10) || 0;
-    const marchMinutes = parseInt(marchMinutesInput.value, 10);
-    const marchSecondsValue = parseInt(marchSecondsInput.value, 10);
+    inputsContainer.innerHTML = '';
+    for (let i = 1; i <= enemyRallyCount; i++) {
+        inputsContainer.appendChild(buildEnemyRallyCard(i));
+    }
+}
 
-    if (
-        Number.isNaN(marchMinutes) ||
-        Number.isNaN(marchSecondsValue) ||
-        marchMinutes < 0 ||
-        marchMinutes > 60 ||
-        marchSecondsValue < 0 ||
-        marchSecondsValue > 59 ||
-        (marchMinutes === 0 && marchSecondsValue === 0)
-    ) {
-        alert('Invalid enemy marching time. Please use 0-60 minutes and 0-59 seconds (not 0:00).');
+function addEnemyRallyInput() {
+    if (enemyRallyCount >= 10) {
+        alert('Maximum is 10 enemy rallies.');
         return;
     }
 
-    const marchingSeconds = parseTimeToSeconds(marchMinutes, marchSecondsValue);
-    const totalToHitSeconds = openRallySeconds + marchingSeconds;
-    const startUtcText = startUtcInput.value.trim();
+    enemyRallyCount += 1;
+    const inputsContainer = document.getElementById('enemyRallyInputs');
+    if (!inputsContainer) {
+        return;
+    }
 
-    let utcEstimateHtml = '';
-    if (startUtcText) {
-        const parsedStart = parseUtcClockToSeconds(startUtcText);
-        if (parsedStart === null) {
-            alert('Please enter enemy start UTC in 24-hour format (HH:MM or HH:MM:SS).');
-            return;
+    inputsContainer.appendChild(buildEnemyRallyCard(enemyRallyCount));
+
+    const labelInput = document.getElementById(`enemy${enemyRallyCount}Name`);
+    if (labelInput) {
+        labelInput.focus();
+        labelInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function removeEnemyRallyInput(index) {
+    if (enemyRallyCount <= 1) {
+        return;
+    }
+
+    const entries = [];
+    for (let i = 1; i <= enemyRallyCount; i++) {
+        if (i === index) {
+            continue;
         }
 
-        const hitUtc = formatUtcClock(parsedStart + totalToHitSeconds);
-        utcEstimateHtml = `<p><strong>Estimated Hit Clock Time:</strong> ${hitUtc} UTC</p>`;
+        entries.push({
+            name: document.getElementById(`enemy${i}Name`)?.value || '',
+            openRallyTime: document.getElementById(`enemy${i}OpenRallyTime`)?.value || '60',
+            marchMinutes: document.getElementById(`enemy${i}MarchMinutes`)?.value || '0',
+            marchSeconds: document.getElementById(`enemy${i}MarchSeconds`)?.value || '0',
+            startUtc: document.getElementById(`enemy${i}StartUtc`)?.value || ''
+        });
+    }
+
+    enemyRallyCount = Math.max(entries.length, 1);
+    renderEnemyRallyInputs();
+
+    entries.forEach((entry, entryIndex) => {
+        const cardIndex = entryIndex + 1;
+        document.getElementById(`enemy${cardIndex}Name`).value = entry.name;
+        document.getElementById(`enemy${cardIndex}OpenRallyTime`).value = entry.openRallyTime;
+        document.getElementById(`enemy${cardIndex}MarchMinutes`).value = entry.marchMinutes;
+        document.getElementById(`enemy${cardIndex}MarchSeconds`).value = entry.marchSeconds;
+        document.getElementById(`enemy${cardIndex}StartUtc`).value = entry.startUtc;
+    });
+}
+
+function collectEnemyRallyEntries() {
+    const entries = [];
+
+    for (let i = 1; i <= enemyRallyCount; i++) {
+        const nameInput = document.getElementById(`enemy${i}Name`);
+        const openRallyInput = document.getElementById(`enemy${i}OpenRallyTime`);
+        const marchMinutesInput = document.getElementById(`enemy${i}MarchMinutes`);
+        const marchSecondsInput = document.getElementById(`enemy${i}MarchSeconds`);
+        const startUtcInput = document.getElementById(`enemy${i}StartUtc`);
+
+        if (!nameInput || !openRallyInput || !marchMinutesInput || !marchSecondsInput || !startUtcInput) {
+            return null;
+        }
+
+        const marchMinutes = parseInt(marchMinutesInput.value, 10);
+        const marchSecondsValue = parseInt(marchSecondsInput.value, 10);
+
+        if (
+            Number.isNaN(marchMinutes) ||
+            Number.isNaN(marchSecondsValue) ||
+            marchMinutes < 0 ||
+            marchMinutes > 60 ||
+            marchSecondsValue < 0 ||
+            marchSecondsValue > 59 ||
+            (marchMinutes === 0 && marchSecondsValue === 0)
+        ) {
+            alert(`Invalid marching time for Enemy Rally ${i}. Please use 0-60 minutes and 0-59 seconds (not 0:00).`);
+            return null;
+        }
+
+        const label = nameInput.value.trim() || `Enemy Rally ${i}`;
+        const openRallySeconds = parseInt(openRallyInput.value, 10) || 0;
+        const marchingSeconds = parseTimeToSeconds(marchMinutes, marchSecondsValue);
+        const totalToHitSeconds = openRallySeconds + marchingSeconds;
+        const startUtcText = startUtcInput.value.trim();
+
+        let hitUtcSeconds = null;
+        if (startUtcText) {
+            const parsedStart = parseUtcClockToSeconds(startUtcText);
+            if (parsedStart === null) {
+                alert(`Please enter ${label} start UTC in 24-hour format (HH:MM or HH:MM:SS).`);
+                return null;
+            }
+
+            hitUtcSeconds = parsedStart + totalToHitSeconds;
+        }
+
+        entries.push({
+            index: i,
+            label,
+            openRallySeconds,
+            marchingSeconds,
+            totalToHitSeconds,
+            startUtcText,
+            hitUtcSeconds
+        });
+    }
+
+    return entries;
+}
+
+function estimateEnemyHitTime() {
+    const resultsDiv = document.getElementById('enemyResults');
+
+    if (!resultsDiv) {
+        return;
+    }
+
+    const entries = collectEnemyRallyEntries();
+    if (!entries) {
+        return;
+    }
+
+    const sortedByDuration = [...entries].sort((a, b) => a.totalToHitSeconds - b.totalToHitSeconds);
+    const sortedByUtcHit = entries
+        .filter((entry) => entry.hitUtcSeconds !== null)
+        .sort((a, b) => a.hitUtcSeconds - b.hitUtcSeconds);
+
+    const resultCardsHtml = sortedByDuration.map((entry) => {
+        const utcEstimateHtml = entry.hitUtcSeconds === null
+            ? '<p><strong>Estimated Hit Clock Time:</strong> Add a UTC open time to calculate.</p>'
+            : `<p><strong>Estimated Hit Clock Time:</strong> ${formatUtcClock(entry.hitUtcSeconds)} UTC</p>`;
+
+        return `
+            <div class="enemy-result-card">
+                <h3>${entry.label}</h3>
+                <p><strong>Total Time To Hit Building:</strong> ${formatTime(entry.totalToHitSeconds)}</p>
+                <p><strong>Breakdown:</strong> ${formatTime(entry.openRallySeconds)} (open) + ${formatTime(entry.marchingSeconds)} (march)</p>
+                ${utcEstimateHtml}
+            </div>
+        `;
+    }).join('');
+
+    let summaryHtml = '';
+    if (sortedByDuration.length > 0) {
+        const fastestByDuration = sortedByDuration[0];
+        summaryHtml += `<p><strong>Fastest Total Time:</strong> ${fastestByDuration.label} in ${formatTime(fastestByDuration.totalToHitSeconds)}</p>`;
+    }
+    if (sortedByUtcHit.length > 0) {
+        const earliestHit = sortedByUtcHit[0];
+        summaryHtml += `<p><strong>Earliest UTC Hit:</strong> ${earliestHit.label} at ${formatUtcClock(earliestHit.hitUtcSeconds)} UTC</p>`;
     }
 
     resultsDiv.innerHTML = `
         <h3>Enemy Hit Estimate</h3>
-        <p><strong>Total Time To Hit Building:</strong> ${formatTime(totalToHitSeconds)}</p>
-        <p><strong>Breakdown:</strong> ${formatTime(openRallySeconds)} (open) + ${formatTime(marchingSeconds)} (march)</p>
-        ${utcEstimateHtml}
+        ${summaryHtml}
+        <div class="enemy-result-grid">${resultCardsHtml}</div>
     `;
     resultsDiv.classList.remove('hidden');
 }
 
 function clearEnemyEstimate() {
-    const openRallyInput = document.getElementById('enemyOpenRallyTime');
-    const marchMinutesInput = document.getElementById('enemyMarchMinutes');
-    const marchSecondsInput = document.getElementById('enemyMarchSeconds');
-    const startUtcInput = document.getElementById('enemyStartUtc');
+    enemyRallyCount = 1;
+    renderEnemyRallyInputs();
     const resultsDiv = document.getElementById('enemyResults');
 
-    if (openRallyInput) {
-        openRallyInput.value = '60';
-    }
-    if (marchMinutesInput) {
-        marchMinutesInput.value = '0';
-    }
-    if (marchSecondsInput) {
-        marchSecondsInput.value = '0';
-    }
-    if (startUtcInput) {
-        startUtcInput.value = '';
-    }
     if (resultsDiv) {
         resultsDiv.innerHTML = '';
         resultsDiv.classList.add('hidden');
