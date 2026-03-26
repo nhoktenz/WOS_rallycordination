@@ -1,6 +1,6 @@
-# Rally Coordinator 🎯
+# Rally Coordinator & Defense Estimator 🎯
 
-Rally timing tool for Whiteout Survival to make multiple leaders hit the target at the same time.
+Attack and defense timing tool for Whiteout Survival.
 
 ## Live Page
 
@@ -9,12 +9,13 @@ Rally timing tool for Whiteout Survival to make multiple leaders hit the target 
 ## Features
 
 - Coordinate 2-10 rally leaders
+- Rally Coordinator section for attack timing
 - Open-rally duration + march-time calculation
 - Execution timeline with T+ offsets
 - Countdown timer with start alerts
 - Handles same-start leaders (tie timing)
 - Edit leader card directly from results
-- Enemy hit estimator tab with multiple enemy rallies and per-rally UTC input
+- Enemy hit estimator section for defense timing with multiple enemy rallies and per-rally UTC input
 - My march timing recommendation to arrive 1 second after the first enemy hit
 - Optional UTC time support
 
@@ -32,8 +33,8 @@ Total Time = Open Rally Time + Marching Time
 
 ## Files
 
-- `index.html` - Rally Coordinator UI
-- `script.js` - Rally logic, enemy estimator, timer, edit flow
+- `index.html` - Attack and defense timing UI
+- `script.js` - Rally logic, defense estimator, timer, edit flow
 - `styles.css` - Styling
 
 ## Author
